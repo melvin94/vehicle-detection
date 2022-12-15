@@ -1,0 +1,6 @@
+flake8
+flake8-cognitive-complexity
+opencv-python
+tensorflow
+tensorflow-hub
+tqdm

@@ -1,78 +1,62 @@
-# Vehicle detection and tracking
-A computer vision project the investigates vehicle detection and tracking.
+# Vehicle detection
+A proof of concept computer vision project that investigates vehicle detection.
 
 # Project setup
 The following outlines the set up requirements:
 1. Pre-requisite: Install Python.
 2. Pre-requisite: Install Conda for additional package environment management.
-3. Pre-requisite: Install NVIDIA CUDA (the models in this project are trained with GPU capability).
-4. Create the development environment and install all the required packages.
+3. Create the development environment and install all the required packages.
 
-## Pre-requisites: Python | Conda | CUDA
-For the purposes of this project, the pre-requisite steps 1-3 will not be outlined in this document. The set up of these requirements are trivial, but may also require machine specific steps in order to set up correctly. Refer to the [Python Docs](https://www.python.org/downloads/), the [Conda Docs](https://conda.io/projects/conda/en/latest/user-guide/install/index.html), and the [CUDA Docs](https://docs.nvidia.com/cuda/) for instructions on how to set up the pre-requisites for this project.
+## Steps 1-2: Pre-requisites Python & Conda
+For the purposes of this project, the pre-requisite steps 1-2 will not be outlined in this document. The set up of these requirements are trivial, but may also require machine specific steps in order to set up correctly. Refer to the [Python Docs](https://www.python.org/downloads/) and the [Conda Docs](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) for instructions on how to set up the pre-requisites for this project.
 
-## Detectron2
-This project utilizes Facebook AI Research's [Detectron2](https://github.com/facebookresearch/detectron2) framework for object detection. Refer to the detectron2 official GitHub repository for detailed instructions and guidelines on how to install detectron2 depending on the desired configuration and the corresponding configuration of your machine.
-
-## Create the development environment and install all the required packages
-My machine runs on Windows 11, and the following steps were followed to correctly set up detectron2 on my machine with CUDA enabled:
-1. In a terminal of your choosing, create a conda environment with python 3.8.
+## Step 3: Create the development environment and install all the required packages
+To create the development environment with conda, follow these steps:
+1. In a terminal of your choosing, create a conda environment with python 3.9.
     ```shell
-    conda create -n py38 python=3.8 -y
+    conda create -n tf-py39 python=3.9 -y
     ```
-2. Once the environment has been created, activate the environment and then install the PyTorch packages with CUDA enabled. The package versions used are indicated as follows:
+2. In your terminal, activate the conda environment created in the previous Step 3.1.
     ```shell
-    pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 --extra-index-url https://download.pytorch.org/whl/cu113
+    conda activate tf-py39
     ```
-3. Install detectron2. The following command is typically used to install the latest version of detectron2:
+3. From within the same terminal, navigate to this project folder.
     ```shell
-    python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
+    cd /your/path/to/vehicle-tracking/
     ```
-    However, detectron2 failed to build on my machine when running this command. The following steps were required in order to correctly install detectron2 on my machine:
-    1. Clone the detectron2 repo locally, but not in this same project folder. From within the same terminal that you have created your conda environment, navigate to some other directory on your machine, and clone the detectron2 repo:
-        ```shell
-        git clone https://github.com/facebookresearch/detectron2.git
-        ```
-    2. Open the following detectron2 file in an editor of your choosing:
-        ```
-        detectron2\detectron2\layers\csrc\nms_rotated\nms_rotated_cuda.cu
-        ```
-    3. Replace the following lines in this file as follows:
-        ```C
-        ...
-        #ifdef WITH_CUDA
-        #include "../box_iou_rotated/box_iou_rotated_utils.h"
-        #endif
-        // TODO avoid this when pytorch supports "same directory" hipification
-        #ifdef WITH_HIP
-        #include "box_iou_rotated/box_iou_rotated_utils.h"
-        #endif
-        ...
-        ```
-        replace with
-        ```C
-        ...
-        #include "../box_iou_rotated/box_iou_rotated_utils.h"
-        ...
-        ```
-        The import statements in this file should look as follows:
-        ```C
-        ...
-        #include <ATen/ATen.h>
-        #include <ATen/cuda/CUDAContext.h>
-        #include <c10/cuda/CUDAGuard.h>
-        #include <ATen/cuda/CUDAApplyUtils.cuh>
-        #include "../box_iou_rotated/box_iou_rotated_utils.h"
-        ...
-        ```
-        Save the file.
-    4. In your terminal, manually install the detectron2 repo as follows:
-        ```shell
-        pip install -e detectron2
-        ```
-4. In your terminal, navigate back to this project folder. Install the other project package requirements as follows:
+4. Install the project package requirements.
     ```shell
     pip install -r requirements.txt
     ```
 
 # Running the code
+This project uses open-source Tensorflow pretrained models for object detection. A list of all available object detection models can be found on [TensorFlowHub](https://tfhub.dev/s?module-type=image-object-detection).
+
+Note: When selecting a pretrained model, be sure to check the class information that the model was trained on. This project uses `mobilenetv2`, which includes detection on some vehicle class categories. The follow class categories are used in this project:
+- `Car`
+- `Motorcycle`
+- `Bus`
+- `Truck`
+
+The selected classes can be defined in the following constants file:
+```
+src/lib/class_constants.py
+```
+
+## Video inference
+To run vehicle detection on a video, run the `video_inference.py` script with the necessary arguments. An example:
+```shell
+python src/video_inference.py --model-url https://tfhub.dev/google/openimages_v4/ssd/mobilenet_v2/1 --video-path data/datasets/video/urban-tracker/sherbrooke_video.avi --frame-limit 10
+```
+
+## Image inference
+To run vehicle detection on a single image, run the `single_image_inference.py` script with the necessary arguments. An example:
+```shell
+python src/single_image_inference.py --model-url https://tfhub.dev/google/openimages_v4/ssd/mobilenet_v2/1 --image-path data/datasets/image/pascal-voc-2012-val-subset/2008_002875_jpg.rf.32e44b678c9caaf122e8b1dcdb2a11e0.jpg
+```
+
+## Image directory inference
+To run vehicle detection on a directory of images, run the `image_dir_inference.py` script with the necessary arguments. An example:
+```shell
+python src/image_dir_inference.py --model-url https://tfhub.dev/google/openimages_v4/ssd/mobilenet_v2/1 --images-path data/datasets/image/pascal-voc-2012-val-subset/
+```
