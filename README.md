@@ -5,12 +5,19 @@ A proof of concept computer vision project that investigates vehicle detection.
 The following outlines the set up requirements:
 1. Pre-requisite: Install Python.
 2. Pre-requisite: Install Conda for additional package environment management.
-3. Create the development environment and install all the required packages.
+3. Clone this repo.
+4. Create the development environment and install all the required packages.
 
 ## Steps 1-2: Pre-requisites Python & Conda
 For the purposes of this project, the pre-requisite steps 1-2 will not be outlined in this document. The set up of these requirements are trivial, but may also require machine specific steps in order to set up correctly. Refer to the [Python Docs](https://www.python.org/downloads/) and the [Conda Docs](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) for instructions on how to set up the pre-requisites for this project.
 
-## Step 3: Create the development environment and install all the required packages
+## Step 3: Clone this repo
+To clone this repo, run the following in a terminal of your choosing:
+```bash
+git clone https://github.com/melvin94/vehicle-detection.git
+```
+
+## Step 4: Create the development environment and install all the required packages
 To create the development environment with conda, follow these steps:
 1. In a terminal of your choosing, create a conda environment with python 3.9.
     ```shell
@@ -42,6 +49,8 @@ The selected classes can be defined in the following constants file:
 ```
 src/lib/class_constants.py
 ```
+
+Use a terminal of your choosing to run the scripts in this project. Before running the scripts, make sure you have activated your conda envrionment as outlined in Step 4.2 above, and then make sure to navigate to the root of this project folder in your terminal, as outlined in Step 4.3 above.
 
 ## Video inference
 To run vehicle detection on a video, run the `video_inference.py` script with the necessary arguments. An example:
