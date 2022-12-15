@@ -55,7 +55,7 @@ Use a terminal of your choosing to run the scripts in this project. Before runni
 ## Video inference
 To run vehicle detection on a video, run the `video_inference.py` script with the necessary arguments. An example:
 ```shell
-python src/video_inference.py --model-url https://tfhub.dev/google/openimages_v4/ssd/mobilenet_v2/1 --video-path data/datasets/video/urban-tracker/sherbrooke_video.avi --frame-limit 10
+python src/video_inference.py --model-url https://tfhub.dev/google/openimages_v4/ssd/mobilenet_v2/1 --video-path data/datasets/video/urban-tracker/sherbrooke_video.avi --frame-limit 10 --save-all-frames --viewer-mode
 ```
 
 ## Image inference
