@@ -43,6 +43,7 @@ ap.add_argument(
     help='Specify the superclass to filter the prediction results with.'
 )
 ap.add_argument('--viewer-mode', action='store_true')
+ap.add_argument('--save-all-frames', action='store_true')
 
 if __name__ == '__main__':
     args = ap.parse_args()
@@ -50,6 +51,7 @@ if __name__ == '__main__':
     video_path = Path(args.video_path)
     superclass = args.superclass
     frame_limit = args.frame_limit
+    save_all = args.save_all_frames
     viewer_mode = args.viewer_mode
 
     if args.output_path:
@@ -69,7 +71,7 @@ if __name__ == '__main__':
 
         detection, img = bounding_box(frame, prediction, superclass=superclass)
 
-        if detection:
+        if detection or save_all:
             output_frame_path = join(output_path, f'frame-{frame_num}.png')
             cv2.imwrite(output_frame_path, img)
 
